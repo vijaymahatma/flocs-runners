@@ -183,6 +183,7 @@ class LINCJSONConfig:
         slurm_params: dict = {},
         restart: bool = False,
         record_stats: bool = False,
+        toil_jobstore: str = "",
     ):
         if self.configfile is None:
             raise RuntimeError("No config file has been created. Save it first.")
@@ -286,7 +287,10 @@ class LINCJSONConfig:
             cmd += ["--writeLogs", get_container_env_var("LOGSDIR")]
             cmd += ["--outdir", get_container_env_var("RESULTSDIR")]
             cmd += ["--tmp-outdir-prefix", get_container_env_var("TMPDIR")]
-            cmd += ["--jobStore", os.path.join(self.rundir, "jobstore")]
+            if not toil_jobstore:
+                cmd += ["--jobStore", os.path.join(self.rundir, "jobstore")]
+            else:
+                cmd += ["--jobStore", toil_jobstore]
             cmd += ["--workDir", workdir]
             if is_ceph:
                 logger.info("Detected CEPH file system, not setting coordinationDir.")
@@ -738,6 +742,10 @@ def calibrator(
             help="Use Toil's stats flag to record statistics. N.B. this disables cleanup of successful steps; make sure there is enough disk space until the end of the run."
         ),
     ] = False,
+    toil_jobstore: Annotated[
+        str,
+        Parameter(help="Path/name for the Toil jobStore directory. Relevant memorable name for run recommended if using (e.g. '<your_path>/jobStore-LINC_calibrator-701779' for data with obsid 701779). Default is 'jobstore' within temporary directory created by processing run. N.B. Toil performance may suffer if directory is in BeeGFS file system."),
+    ] = "",
 ):
     args = locals()
     logger.info("Generating LINC Calibrator config")
@@ -762,6 +770,7 @@ def calibrator(
         "restart",
         "record_toil_stats",
         "outdir",
+        "toil_jobstore",
     ]
     args_for_linc = args.copy()
     for key in unneeded_keys:
@@ -785,6 +794,7 @@ def calibrator(
             workdir=args["rundir"],
             restart=args["restart"],
             record_stats=args["record_toil_stats"],
+            toil_jobstore=args["toil_jobstore"],
         )
 
 
@@ -1031,6 +1041,10 @@ def target(
             help="Use Toil's stats flag to record statistics. N.B. this disables cleanup of successful steps; make sure there is enough disk space until the end of the run."
         ),
     ] = False,
+    toil_jobstore: Annotated[
+        str,
+        Parameter(help="Path/name for the Toil jobStore directory. Relevant memorable name for run recommended if using (e.g. '<your_path>/jobStore-LINC_target-701783' for data with obsid 701783). Default is 'jobstore' within temporary directory created by processing run. N.B. Toil performance may suffer if directory is in BeeGFS file system."),
+    ] = "",
 ):
     args = locals()
     logger.info("Generating LINC Target config")
@@ -1057,6 +1071,7 @@ def target(
         "restart",
         "record_toil_stats",
         "outdir",
+        "toil_jobstore",
     ]
     args_for_linc = args.copy()
     if args_for_linc["output_fullres_data"]:
@@ -1105,6 +1120,7 @@ def target(
             workdir=args["rundir"],
             restart=args["restart"],
             record_stats=args["record_toil_stats"],
+            toil_jobstore=args["toil_jobstore"],
         )
 
 
