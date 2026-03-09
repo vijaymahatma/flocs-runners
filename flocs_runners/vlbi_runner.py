@@ -56,22 +56,6 @@ class VLBIJSONConfig:
         self.configdict = {}
         self.outdir = outdir
 
-        """
-        if msin:
-            #For polarization workflow -- any user-specified ms
-            if not os.path.isdir(msin):
-                logger.critical(f"Input path does not exist: {msin}")
-                sys.exit(-1)
-            files = sorted(glob.glob(msin))
-            logger.info(f"Using ms: {msin} for polarization imaging")
-        else:
-            filedir = os.path.join(mspath, f"*{ms_suffix}")
-            logger.info(f"Searching {filedir}")
-            files = sorted(glob.glob(filedir))
-            if not files:
-                logger.critical(f"No MS files found in {mspath} with suffice {ms_suffix}")
-                sys.exit(-1)
-        """
         filedir = os.path.join(mspath, f"*{ms_suffix}")
         logger.info(f"Searching {filedir}")
         files = sorted(glob.glob(filedir))
@@ -1123,13 +1107,14 @@ def polarization_imaging(
         "slurm_queue",
         "slurm_account",
         "slurm_time",
+        "restart",
+        "outdir",
     ]
     args_for_linc = args.copy()
+
     for key in unneeded_keys:
         args_for_linc.pop(key,None)
     for key, val in args_for_linc.items():
-        if key == "msin":
-            continue
         config.add_entry(key, val)
     config.save("mslist_VLBI_polarization-imaging.json")
     if not args["config_only"]:
@@ -1260,7 +1245,7 @@ def setup(
         prefac_h5parm=args["solset"],
     )
     unneeded_keys = [
-        "msin",
+        "mspath",
         "config_only",
         "scheduler",
         "runner",
