@@ -1065,6 +1065,10 @@ def polarization_imaging(
         Optional[str],
         Parameter(help="Extra arguments passed to rmsynth3d."),
     ] = None,
+    outdir: Annotated[
+        str,
+        Parameter(help="Directory to move outputs to."),
+    ] = os.getcwd()
     config_only: Annotated[
         bool,
         Parameter(help="Only generate the config file, do not run it."),
@@ -1108,7 +1112,7 @@ def polarization_imaging(
     """
     config = VLBIJSONConfig(
         args["mspath"],
-        ms_suffix=args["ms_suffix"],
+        ms_suffix=args["ms_suffix"], outdir=outdir
     )
     unneeded_keys = [
         "mspath",
