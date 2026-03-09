@@ -1068,7 +1068,7 @@ def polarization_imaging(
     outdir: Annotated[
         str,
         Parameter(help="Directory to move outputs to."),
-    ] = os.getcwd()
+    ] = os.getcwd(),
     config_only: Annotated[
         bool,
         Parameter(help="Only generate the config file, do not run it."),
