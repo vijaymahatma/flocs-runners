@@ -40,7 +40,6 @@ class VLBIJSONConfig:
     def __init__(
         self,
         mspath: str,
-        #msin: str,
         ms_suffix: str = ".MS",
         prefac_h5parm={"path": ""},
         ddf_solsdir: dict = {"path": ""},
@@ -60,7 +59,7 @@ class VLBIJSONConfig:
         logger.info(f"Searching {filedir}")
         files = sorted(glob.glob(filedir))
         if not files:
-            logger.critical(f"No MS files found in {mspath} with suffice {ms_suffix}")
+            logger.critical(f"No MS files found in {mspath} with suffix {ms_suffix}")
             sys.exit(-1)
         logger.info(f"Found {len(files)} files")
 
@@ -73,14 +72,7 @@ class VLBIJSONConfig:
                 x = json.loads(f'{{"class": "Directory", "path":"{ms}"}}')
                 mslist.append(x)
             self.configdict["msin"] = mslist
-        elif msin:
-            mslist = []
-            for ms in files:
-                ms_dir_object = {
-                    "class": "Directory",
-                    "path": os.path.abspath(ms)
-                }
-                mslist.append(ms_dir_object)
+
         else:
             prefac_freqs = get_prefactor_freqs(
                 solname=prefac_h5parm["path"], solset="target"
@@ -1038,7 +1030,6 @@ def polarization_imaging(
     ms_suffix: Annotated[
         str, Parameter(help="Extension to look for when searching `mspath` for MSes.")
     ] = ".ms",
-    #msin: Annotated[str, Parameter(help="Directory where MS is located.")],
     pixel_scale: Annotated[
         Optional[str],
         Parameter(help="Pixel sampling for imaging in WSClean"),
@@ -1114,12 +1105,7 @@ def polarization_imaging(
 ):
     args = locals()
     logger.info("Generating VLBI polarization-imaging config")
-    """
-    config = VLBIJSONConfig(
-        mspath=None,
-        msin=args["msin"],
-    )
-    """
+
     config = VLBIJSONConfig(
         args["mspath"],
         ms_suffix=args["ms_suffix"], outdir=outdir
