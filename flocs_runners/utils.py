@@ -307,7 +307,7 @@ def ra_dec_to_iltj(ra_deg, dec_deg):
 
 def is_ms(ms: str):
     try:
-        with ct.table(mspath) as ms:
+        with ct.table(ms) as ms_open:
             pass
         return True
     except RuntimeError:
