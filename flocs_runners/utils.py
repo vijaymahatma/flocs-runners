@@ -304,3 +304,12 @@ def ra_dec_to_iltj(ra_deg, dec_deg):
         f"{sign}{dec_d:02d}{dec_m:02d}{dec_s:04.1f}"
     )
     return source_name
+
+def is_ms(ms: str):
+    try:
+        with ct.table(mspath) as ms:
+            pass
+        return True
+    except RuntimeError:
+        # Trying to open an invalid Measurement Set will throw this exception.
+        return False
