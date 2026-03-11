@@ -54,16 +54,8 @@ class VLBIJSONConfig:
 
         self.configdict = {}
         self.outdir = outdir
-        """
-        filedir = os.path.join(mspath, f"*{ms_suffix}")
-        logger.info(f"Searching {filedir}")
-        files = sorted(glob.glob(filedir))
-        if not files:
-            logger.critical(f"No MS files found in {mspath} with suffix {ms_suffix}")
-            sys.exit(-1)
-        logger.info(f"Found {len(files)} files")
-		"""
-		if not is_ms(mspath):
+
+        if not is_ms(mspath):
             filedir = os.path.join(mspath, f"*{ms_suffix}")
             logger.info(f"Searching {filedir}")
             files = sorted(glob.glob(filedir))
@@ -77,7 +69,7 @@ class VLBIJSONConfig:
         else:
             logger.info("Found MS {mspath}")
             files = [mspath]
-            
+
         if (not prefac_h5parm) or (
             not prefac_h5parm["path"].endswith("h5")
             and not prefac_h5parm["path"].endswith("h5parm")
